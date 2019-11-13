@@ -1,15 +1,17 @@
 # Packages
 
-The Catkin workspace consists of two packages. The simulation environment 'Faltland' and the package for the course 'racing'.
+This catkin workspace consists of the following catkin packages:
 
-## Flatland 
+## flatland
 
-Flatland is a performance centric 2D robot simulator.
-It is intended for use as a light weight alternative to Gazebo Simulator for ground robots on a flat surface.
+Flatland is a performance-optimized 2D simulator for ground robots on a flat surface.
+It is a light-weight alternative to the more heavy ROS-native Gazebo simulator.
 Flatland uses Box2D for physics simulation and it is built to integrate directly with ROS.
-Flatland loads its simulation environment from YAML files and provide a plugin system for extending its functionalities.
+Flatland loads its simulation environment from YAML files and provides a plugin system for extending its functionalities.
 
-## Racing
+## flatland_ika_plugins
+Self-written plugins to adapt the simulation environment to our needs.
 
-This package includes all contents of the course. In addition to a vehicle model based on the single-track drive.
-Here you can also find a vehicle controller and the simulation configuration. 
+## racing
+
+Contains the vehicle controller, which receives measurements from the simulation, processes them, and provides actuator commands back to the simulation.
