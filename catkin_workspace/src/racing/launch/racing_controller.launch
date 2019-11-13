@@ -1,0 +1,14 @@
+<launch>
+
+    <!-- Arguments to pass from external launch file. Set topics for both laser scanner and motor -->
+    <arg name="laser_topic" default="vehicle/laser" />
+    <arg name="vehicle_actors_topic" default="vehicle/actors" />
+
+    <!-- Pass arguments to a parameter. -->
+    <param name="vehicle_controller/laser/topic" value="$(arg laser_topic)" type="str"/>
+    <param name="vehicle_controller/actors/topic" value="$(arg vehicle_actors_topic)" type="str"/>
+
+    <!-- Execute the racing controller node. -->
+    <node name="racing_controller" pkg="racing" type="racing_controller_node" />
+
+</launch>

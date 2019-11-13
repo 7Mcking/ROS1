@@ -1,0 +1,5 @@
+<library path="lib/libflatland_ika_plugins_lib">
+  <class type="flatland_ika_plugins::SingleTrackDrive" base_class_type="flatland_server::ModelPlugin">
+    <description>Ika flatland one track vehicle plugin</description>
+  </class>
+</library>

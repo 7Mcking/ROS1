@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>racing</name>
+  <version>0.1.0</version>
+  <description>Package including all code controller code for the racing car used by the self driving lab I - ROS.</description>
+
+  <maintainer email="simon.schaefer@ika.rwth-aachen.de">Simon Schaefer</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>flatland_msgs</depend>
+  <depend>flatland_plugins</depend>
+  <depend>flatland_server</depend>
+  <depend>flatland_viz</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+
+  <export>
+  </export>
+</package>
