@@ -87,17 +87,20 @@ int main(int argc, char* argv[]) {
   ROS_INFO("Vehicle controller started.");
 
   // Set default read and write topics
-  std::string subscribe_topic_sensors = "vehicle/laser";
-  std::string publish_topic_actors = "vehicle/actors";
+  std::string default_subscribe_topic_sensors = "";
+  std::string default_publish_topic_actors = "";
+
+  std::string subscribe_topic_sensors;
+  std::string publish_topic_actors;
 
   // Get read and write targets from launch file parameter
-  node_handle.param<std::string>("vehicle_controller/laser/topic",
+  node_handle.param<std::string>("vehicle/sensor_topic",
                                  subscribe_topic_sensors,
-                                 subscribe_topic_sensors);
+                                 default_subscribe_topic_sensors);
 
-  node_handle.param<std::string>("vehicle_controller/actors/topic",
+  node_handle.param<std::string>("vehicle/actuator_topic",
                                  publish_topic_actors,
-                                 publish_topic_actors);
+                                 default_publish_topic_actors);
 
   ROS_INFO("Vehicle controller will listen to: %s", subscribe_topic_sensors.c_str());
   ROS_INFO("Vehicle controller will write to: %s", publish_topic_actors.c_str());
