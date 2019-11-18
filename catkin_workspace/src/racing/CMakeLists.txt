@@ -29,10 +29,10 @@ catkin_package(INCLUDE_DIRS include
 
 # Adding library that doesn't make use of Ros.
 add_library(racing_library
-    src/RacingController.cpp)
+    src/VehicleController.cpp)
 
 # Add executable that uses ROS to receive and send data calculated by the library.
-add_executable(racing_controller_node src/racing_controller_node.cpp)
+add_executable(vehicle_controller_node src/vehicle_controller_node.cpp)
 
 # Define headers for this library. PUBLIC headers are used by compiling by the exteral developers, and will be added to
 # consumers' build paths.
@@ -42,16 +42,16 @@ target_include_directories(racing_library PUBLIC
     PRIVATE src)
 
 # Set the install directories to the correct locations (provided by catkin).
-install(TARGETS racing_library racing_controller_node EXPORT RacingLibraryConfig
+install(TARGETS racing_library vehicle_controller_node EXPORT RacingLibraryConfig
     ARCHIVE  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(DIRECTORY include/ DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 # Linking the libraray to the ROS node.
-target_link_libraries(racing_controller_node racing_library)
+target_link_libraries(vehicle_controller_node racing_library)
 
 # Link the node to the ROS packages used to encode send and receive signals.
-add_dependencies(racing_controller_node ${catkin_EXPORTED_TARGETS})
-target_include_directories(racing_controller_node PRIVATE ${catkin_INCLUDE_DIRS})
-target_link_libraries(racing_controller_node ${catkin_LIBRARIES})
+add_dependencies(vehicle_controller_node ${catkin_EXPORTED_TARGETS})
+target_include_directories(vehicle_controller_node PRIVATE ${catkin_INCLUDE_DIRS})
+target_link_libraries(vehicle_controller_node ${catkin_LIBRARIES})

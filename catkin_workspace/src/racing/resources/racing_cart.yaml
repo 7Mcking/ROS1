@@ -82,7 +82,7 @@ plugins:
     rear_left_wheel_joint: rear_left_wheel_weld
     rear_right_wheel_joint: rear_right_wheel_weld
     odom_frame_id: map
-    target_twist_sub: vehicle/actors
+    target_twist_sub: vehicle/actuator_commands
     current_twist_pub: vehicle/wheel_sensors
     max_angular_velocity: 1.5
     max_steering_angle: 0.7
@@ -94,7 +94,7 @@ plugins:
   - type: Laser
     name: laser_front
     frame: laser_front
-    topic: vehicle/laser
+    topic: vehicle/lidar_measurements
     body: base
     broadcast_tf: true
     origin: [0.28, 0, 0]
@@ -106,7 +106,7 @@ plugins:
   - type: Laser
     name: laser_top
     frame: laser_top
-    topic: vehicle/laser_ref
+    topic: vehicle/lidar_measurements_ref
     body: base
     broadcast_tf: true
     origin: [0, 0, 1]

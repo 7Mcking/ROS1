@@ -2,7 +2,7 @@
 <package format="2">
   <name>racing</name>
   <version>0.1.0</version>
-  <description>Package including all code controller code for the racing car used by the self driving lab I - ROS.</description>
+  <description>Controller for the racing vehicle</description>
 
   <maintainer email="simon.schaefer@ika.rwth-aachen.de">Simon Schaefer</maintainer>
 

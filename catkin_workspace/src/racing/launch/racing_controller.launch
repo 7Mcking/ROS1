@@ -1,12 +1,12 @@
 <launch>
 
-    <arg name="sensor_topic" default="vehicle/laser"/>
-    <arg name="actuator_topic" default="vehicle/actors"/>
+    <arg name="sensor_topic" default="vehicle/lidar_measurements"/>
+    <arg name="actuator_topic" default="vehicle/actuator_commands"/>
 
     <!-- put arguments defined above into parameter server -->
     <param name="vehicle/actuator_topic" value="$(arg actuator_topic)" type="str"/>
     <param name="vehicle/sensor_topic" value="$(arg sensor_topic)" type="str"/>
 
-    <node name="racing_controller" pkg="racing" type="racing_controller_node" output="screen"/>
+    <node name="vehicle_controller" pkg="racing" type="vehicle_controller_node" output="screen"/>
 
 </launch>

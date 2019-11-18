@@ -11,10 +11,10 @@
 /**
  * @author Simon Schaefer
  * @date 18.08.19
- * @file racing_controller_node.h
+ * @file vehicle_controller_node.h
  */
 
-#include "RacingController.h"
+#include "VehicleController.h"
 
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
@@ -36,7 +36,7 @@ ros::Subscriber *subscriber_sensor_data = nullptr;
 /**
  * @brief Pointer to the vehicle controller.
  */
-RacingController *racing_controller;
+VehicleController *vehicle_controller;
 
 /**
  * @brief Callback function that is triggered if a new set of points is available.
@@ -56,12 +56,12 @@ void callbackLaserSensor(const sensor_msgs::LaserScanPtr &msg) {
   }
 
   // Copy new distances into the controller buffer
-  racing_controller->updateDistances(distances);
+  vehicle_controller->updateDistances(distances);
   // Calculate new velocity and steering angle
-  racing_controller->calculateNewAction();
+  vehicle_controller->calculateNewAction();
   // Copy new velocity and steering angle into the local buffer
-  linear_velocity = racing_controller->getNewVelocity();
-  steering_angle = racing_controller->getNewSteeringAngle();
+  linear_velocity = vehicle_controller->getNewVelocity();
+  steering_angle = vehicle_controller->getNewSteeringAngle();
 
   // Create a vector from the steering angle
   geometry_msgs::Vector3 steering;
@@ -102,11 +102,11 @@ int main(int argc, char* argv[]) {
                                  publish_topic_actors,
                                  default_publish_topic_actors);
 
-  ROS_INFO("Vehicle controller will listen to: %s", subscribe_topic_sensors.c_str());
-  ROS_INFO("Vehicle controller will write to: %s", publish_topic_actors.c_str());
+  ROS_INFO("Vehicle controller subscribes to: %s", subscribe_topic_sensors.c_str());
+  ROS_INFO("Vehicle controller publishes to: %s", publish_topic_actors.c_str());
 
   // Initiate controller, publisher and subscriber
-  racing_controller = new RacingController;
+  vehicle_controller = new VehicleController;
   subscriber_sensor_data = new ros::Subscriber;
   publisher_actions = new ros::Publisher;
 
@@ -121,6 +121,6 @@ int main(int argc, char* argv[]) {
   // Clean heap storage
   delete publisher_actions;
   delete subscriber_sensor_data;
-  delete racing_controller;
+  delete vehicle_controller;
   return 0;
 }

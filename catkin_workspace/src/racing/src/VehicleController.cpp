@@ -11,22 +11,22 @@
 /**
  * @author Simon Schaefer
  * @date 10.08.19
- * @file RacingController.cpp
+ * @file VehicleController.cpp
  */
 
-#include "RacingController.h"
+#include "VehicleController.h"
 
 #include <cstdlib>
 #include <cmath>
 
-void RacingController::calculateTargetVelocity() {
+void VehicleController::calculateTargetVelocity() {
   const float FACTOR = 2.0f;
   const float FACTOR2 = 8.0f;
   // Use a parameterized response curve
   this->target_velocity_ = this->sensor_distances_[1]*std::tanh(this->sensor_distances_[1]*FACTOR2)*FACTOR;
 }
 
-void RacingController::calculateTargetSteeringAngle() {
+void VehicleController::calculateTargetSteeringAngle() {
   const float FACTOR = 0.2f;
   const float FACTOR2 = 0.4f;
   // Calcualte relative position on road
@@ -35,7 +35,7 @@ void RacingController::calculateTargetSteeringAngle() {
   this->target_steering_angle_ = 1.0/(FACTOR2*this->sensor_distances_[1])*(diff)*std::tanh(std::abs(diff))*FACTOR;
 }
 
-void RacingController::updateDistances(const float distances[3]) {
+void VehicleController::updateDistances(const float distances[3]) {
   // Copy to local buffer
   // Maybe a std::memcpy is more efficiently here
   for(size_t i = 0; i<3; i++){
@@ -43,18 +43,18 @@ void RacingController::updateDistances(const float distances[3]) {
   }
 }
 
-void RacingController::calculateNewAction() {
+void VehicleController::calculateNewAction() {
   // Calculate new velocity
   calculateTargetVelocity();
   // Calculate new steeting angle
   calculateTargetSteeringAngle();
 }
 
-float RacingController::getNewVelocity() {
+float VehicleController::getNewVelocity() {
   return this->target_velocity_;
 }
 
-float RacingController::getNewSteeringAngle() {
+float VehicleController::getNewSteeringAngle() {
   return this->target_steering_angle_;
 }
 

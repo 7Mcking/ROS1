@@ -11,13 +11,13 @@
 /**
  * @author Simon Schaefer
  * @date 10.08.19
- * @file RacingController.h
+ * @file VehicleController.h
  */
 
 /**
  * @brief Controller that will control the vehicle behaviour based on the sensor data.
  */
-class RacingController {
+class VehicleController {
  private:
   /**
    * @brief Current sensor states.
