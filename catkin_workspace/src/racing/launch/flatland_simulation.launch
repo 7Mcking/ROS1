@@ -25,16 +25,8 @@
   <!-- Launch rviz -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find racing)/rviz/racing.rviz" />
 
-  <!-- Parameter for vehicle state publisher. -->
-  <arg name="lang" value="$(optenv LANG en_US)" />
-
-  <group if="$(eval 'de_DE' in arg('lang'))">
-    <param name="robot_description" command="cat $(find racing)/urdf/racing_cart_de.urdf"/>
-    <node name="vehicle_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-  </group>
-  <group unless="$(eval 'de_DE' in arg('lang'))">
-    <param name="robot_description" command="cat $(find racing)/urdf/racing_cart_en.urdf"/>
-    <node name="vehicle_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-  </group>
+  <!-- Generate relation between vehicle and map -->
+  <param name="robot_description" command="cat $(find racing)/urdf/racing_cart.urdf"/>
+  <node name="vehicle_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
 </launch>
