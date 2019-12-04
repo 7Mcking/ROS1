@@ -19,28 +19,21 @@
 #include <cstdlib>
 #include <cmath>
 
+/***************************************************************
+  All sections that are marked with a [TODO] rag are missing up
+  to four lines of code.
+****************************************************************/
+
 void VehicleController::calculateTargetVelocity() {
-  const float FACTOR = 2.0f;
-  const float FACTOR2 = 8.0f;
-  // Use a parameterized response curve
-  this->target_velocity_ = this->sensor_distances_[1]*std::tanh(this->sensor_distances_[1]*FACTOR2)*FACTOR;
+  // [TODO] Add your code to control the velocity here
 }
 
 void VehicleController::calculateTargetSteeringAngle() {
-  const float FACTOR = 0.2f;
-  const float FACTOR2 = 0.4f;
-  // Calcualte relative position on road
-  float  diff = this->sensor_distances_[2]-this->sensor_distances_[0];
-  // Use a parameterized response curve
-  this->target_steering_angle_ = 1.0/(FACTOR2*this->sensor_distances_[1])*(diff)*std::tanh(std::abs(diff))*FACTOR;
+  // [TODO] Add your code to control the steering angle here
 }
 
 void VehicleController::updateDistances(const float distances[3]) {
-  // Copy to local buffer
-  // Maybe a std::memcpy is more efficiently here
-  for(size_t i = 0; i<3; i++){
-    this->sensor_distances_[i] = distances[i];
-  }
+  // [TODO] Copy the new distances in to the buffer provided by this class
 }
 
 void VehicleController::calculateNewAction() {

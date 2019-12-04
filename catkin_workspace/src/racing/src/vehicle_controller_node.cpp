@@ -23,6 +23,10 @@
 
 #include <memory>
 
+/***************************************************************
+  All sections that are marked with a [TODO] rag are missing up
+  to four lines of code.
+****************************************************************/
 
 /**
  * @brief Publisher for the target actions.
@@ -50,77 +54,50 @@ void callbackLaserSensor(const sensor_msgs::LaserScanPtr &msg) {
   // Buffer for the new steering angle
   float steering_angle = 0.0f;
 
-  // Copy the distances to the buffer
-  for(size_t i=0; i<3;i++){
-    distances[i] = msg->ranges[i];
-  }
+  // [TODO] Extract the ranges from the laser scan and put the into distance buffer
 
-  // Copy new distances into the controller buffer
-  vehicle_controller->updateDistances(distances);
-  // Calculate new velocity and steering angle
-  vehicle_controller->calculateNewAction();
-  // Copy new velocity and steering angle into the local buffer
-  linear_velocity = vehicle_controller->getNewVelocity();
-  steering_angle = vehicle_controller->getNewSteeringAngle();
+  // [TODO] Copy the distances into the controller and caluclate the new actions
+
+  // [TODO] Extract the new velocity and steering angle from the controller
 
   // Create a vector from the steering angle
   geometry_msgs::Vector3 steering;
-  steering.z = steering_angle;
+  // [TODO] Convert the steering angle to a vector
 
   // Create a vector from the linear velocity
   geometry_msgs::Vector3 velocity;
-  velocity.x = linear_velocity;
+  // [TODO] Convert the velocity to a vector
 
   // Create a Twist from both vectors
   geometry_msgs::Twist new_action;
-  new_action.linear = velocity;
-  new_action.angular = steering;
+  // [TODO] Set you linear and angular velocity vectors into the twist message
 
   // Push the new Twist on to the topic
   publisher_actions->publish(new_action);
 }
 
 int main(int argc, char* argv[]) {
-  // Initialise the new node
-  ros::init(argc, argv, "vehicle_controller");
-  ros::NodeHandle node_handle;
-  ROS_INFO("Vehicle controller started.");
+  // [TODO] Init your node here 
 
+  
   // Set default read and write topics
   std::string default_subscribe_topic_sensors = "";
   std::string default_publish_topic_actors = "";
 
-  std::string subscribe_topic_sensors;
-  std::string publish_topic_actors;
-
-  // Get read and write targets from launch file parameter
-  node_handle.param<std::string>("vehicle/sensor_topic",
-                                 subscribe_topic_sensors,
-                                 default_subscribe_topic_sensors);
-
-  node_handle.param<std::string>("vehicle/actuator_topic",
-                                 publish_topic_actors,
-                                 default_publish_topic_actors);
-
-  ROS_INFO("Vehicle controller subscribes to: %s", subscribe_topic_sensors.c_str());
-  ROS_INFO("Vehicle controller publishes to: %s", publish_topic_actors.c_str());
+  // BONUS [TODO] Read parameter from the launch file to set the topics
 
   // Initiate controller, publisher and subscriber
   vehicle_controller = new VehicleController;
   subscriber_sensor_data = new ros::Subscriber;
   publisher_actions = new ros::Publisher;
 
-  // Define publisher and subscriber
-  *subscriber_sensor_data = node_handle.subscribe(subscribe_topic_sensors, 10, callbackLaserSensor);
-  *publisher_actions = node_handle.advertise<geometry_msgs::Twist>(publish_topic_actors, 10);
+  // [TODO] Allocate new space for the subscriber and the publisher
 
-  // Prevent ros from termination
-  ROS_INFO("Vehicle controller is running...");
-  ros::spin();
 
-  // Clean heap storage
-  delete publisher_actions;
-  delete subscriber_sensor_data;
-  delete vehicle_controller;
+  // [TODO] Create subscriber and publisher for the allocated space
+
+
+  // [TODO] Prevent the node from termination by spinning ROS
+
   return 0;
 }
