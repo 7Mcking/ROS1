@@ -9,64 +9,39 @@
  *    https://git.rwth-aachen.de/ika/sdl1-ws2019.
  */
 /**
- * @author Simon Schaefer
- * @date 10.08.19
+ * @author Simon Schaefer, Michael Hoss
  * @file VehicleController.h
  */
 
 /**
- * @brief Controller that will control the vehicle behaviour based on the sensor data.
+ * @brief Controller that computes target vehicle behavior (actuator commands)
+ * based on a Lidar scan
+ * @details This class does not depend on ROS such that it could be used in
+ * another framework as well. This increases code re-usability.
  */
 class VehicleController {
  private:
-  /**
-   * @brief Current sensor states.
-   * @details Ordered mathematical positive like left, front, right.
-   */
-  float sensor_distances_[3] = {0.0f, 0.0f, 0.0f};
 
-  /**
-   * @brief Target velocity based on the distance to the next target in front.
-   */
-  float target_velocity_ = 0.0f;
+  // member variables
+  float sensor_distances_[3] = {0.0f, 0.0f, 0.0f}; ///< order: right, front, left
+  double target_velocity_ = 0.0f; ///< positive for moving forward
+  double target_steering_angle_ = 0.0f; ///< positive counterclockwise ("to the left")
 
-  /**
-   * @brief Target streering angle based on the distance to the left and right.
-   */
-  float target_steering_angle_ = 0.0f;
+  // internal functions
+  void computeTargetVelocity(); ///< based on measured front lidar distance
+  void computeTargetSteeringAngle(); ///< based on measured left and right lidar distances
 
-  /**
-   * @brief Will calculate the new target velocity based on the sensor data available.
-   */
-  void calculateTargetVelocity();
-
-  /**
-   * @brief Will calculate the new target steering angle based on the sensor data available.
-   */
-  void calculateTargetSteeringAngle();
  public:
 
-  /**
-   * @brief Will update the stored sensor data with new one.
-   * @param distances Distances ordered mathematical positive like left, front, right.
-   */
-  void updateDistances(const float distances[3]);
+  // interface functions to be called from e.g. a wrapping ROS node
 
   /**
-   * @brief Will calculate velocity and steering angle based on the sensor data.
+   * @brief input accessor to overwrite the internally stored Lidar distances
+   * @param distances order: right, front, left.
    */
-  void calculateNewAction();
-
-  /**
-   * @brief Access to the velocity calculated based on the sensor data.
-   * @return Target velocity
-   */
-  float getNewVelocity();
-
-  /**
-   * @brief Access to the steering angle calculated based on the sensor data.
-   * @return Target steering angle
-   */
-  float getNewSteeringAngle();
+  void overwriteLidarDistances(const float distances[3]);
+  void computeTargetValues(); ///< compute target values (actuator commands) based on given sensor data
+  double getTargetVelocity(); ///< output accessor
+  double getTargetSteeringAngle(); ///< output accessor
 
 };

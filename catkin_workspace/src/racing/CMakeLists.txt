@@ -1,25 +1,22 @@
-# For usage of the mdoern cmake features a high version of CMake is requierd.
-cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR) # required for modern CMake features
 
-# Prefent this CMakeLists to be read multiple times in a single project.
-include_guard(GLOBAL)
+include_guard(GLOBAL) # this CMakeLists can only be read once in this project
 
-# Define library meta information her. Since CMake 3.0.0 a version and language deinfintion is required.
 project(racing VERSION 0.1 LANGUAGES CXX)
 
-# Set Cxx11 the standard of this project. This makes a compiler that supports Cxx11 necesarry.
-set(CMAKE_CXX_STANDARD 11)
-# Enforce Cxx11 to be used by the compiler.
-set(CMAKE_CXX_STANDARD_REQUIRED  11)
+set(CMAKE_CXX_STANDARD 11) # compiler that supports C++11 is necessary
+set(CMAKE_CXX_STANDARD_REQUIRED  11) # C++11 must be used by the compiler
 
-# Find catkin and all required components. Roscpp is the implementation of ROS und Cxx. The Sensor-Msgs are used to
-# send the laserscanner data. The Geometry-Msgs are used to send the target vehicle state.
+# Find catkin and all required components.
+# - roscpp: client library of ROS in Cpp
+# - sensor_msgs: package containing lidar scan message definition
+# - geometry_msgs: package containing "twist" message for target values for actuators
 find_package(catkin REQUIRED REQUIRED COMPONENTS
     roscpp
     sensor_msgs
     geometry_msgs)
 
-# Create the catkin package that depends on all requirements mentions above.
+# Create the catkin package that depends on all requirements mentions above
 catkin_package(INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS
@@ -27,31 +24,30 @@ catkin_package(INCLUDE_DIRS include
     sensor_msgs
     geometry_msgs)
 
-# Adding library that doesn't make use of Ros.
+# add a building output: a library independent of ROS
 add_library(racing_library
     src/VehicleController.cpp)
 
-# Add executable that uses ROS to receive and send data calculated by the library.
+# add a building output: a ROS-node that wraps the ROS-independent library
 add_executable(vehicle_controller_node src/vehicle_controller_node.cpp)
 
-# Define headers for this library. PUBLIC headers are used by compiling by the exteral developers, and will be added to
-# consumers' build paths.
+# Define headers for this library
 target_include_directories(racing_library PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     PRIVATE src)
 
-# Set the install directories to the correct locations (provided by catkin).
+# Set the install directories to the correct locations (provided by catkin)
 install(TARGETS racing_library vehicle_controller_node EXPORT RacingLibraryConfig
     ARCHIVE  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(DIRECTORY include/ DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
-# Linking the libraray to the ROS node.
+# Link the ROS node to the ROS-independent libraray
 target_link_libraries(vehicle_controller_node racing_library)
 
-# Link the node to the ROS packages used to encode send and receive signals.
+# Link the ROS node to the ROS packages used to encode send and receive signals
 add_dependencies(vehicle_controller_node ${catkin_EXPORTED_TARGETS})
 target_include_directories(vehicle_controller_node PRIVATE ${catkin_INCLUDE_DIRS})
 target_link_libraries(vehicle_controller_node ${catkin_LIBRARIES})
