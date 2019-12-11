@@ -33,6 +33,13 @@ VehicleController *vehicle_controller = nullptr;
  * @param msg A pointer to message object that contains the new Lidar scan
  */
 void callbackLaserSensor(const sensor_msgs::LaserScanPtr &msg) {
+
+  ROS_INFO("Solution: log message on receipt of a new Lidar message.");
+  ROS_INFO("Solution: Lidar distances: right=%2f, front=%2f, left=%2f.",
+           msg->ranges[0],
+           msg->ranges[1],
+           msg->ranges[2]);
+
   // Copy argument data to local variable
   float distances[3] = {0.0f, 0.0f, 0.0f};
   for(size_t i=0; i<3;i++){
@@ -64,22 +71,9 @@ int main(int argc, char* argv[]) {
   ros::NodeHandle node_handle;
   ROS_INFO("Vehicle controller started.");
 
-  // Set default subscribe and publish topics
-  std::string default_subscribe_topic_sensors = "";
-  std::string default_publish_topic_actuators = "";
-
-  // Declare actual subscribe and publish topics
-  std::string subscribe_topic_sensors;
-  std::string publish_topic_actuators;
-
-  // Get publish and subscribe topics from parameter server
-  node_handle.param<std::string>("vehicle/sensor_topic",
-                                 subscribe_topic_sensors,
-                                 default_subscribe_topic_sensors);
-
-  node_handle.param<std::string>("vehicle/actuator_topic",
-                                 publish_topic_actuators,
-                                 default_publish_topic_actuators);
+  // Solution: hard-code the right topic names
+  std::string subscribe_topic_sensors = "vehicle/lidar_measurements";
+  std::string publish_topic_actuators = "vehicle/actuator_commands";
 
   ROS_INFO("Vehicle controller subscribes to: %s", subscribe_topic_sensors.c_str());
   ROS_INFO("Vehicle controller publishes to: %s", publish_topic_actuators.c_str());
@@ -93,9 +87,15 @@ int main(int argc, char* argv[]) {
   *subscriber_sensor_data = node_handle.subscribe(subscribe_topic_sensors, 10, callbackLaserSensor);
   *publisher_actions = node_handle.advertise<geometry_msgs::Twist>(publish_topic_actuators, 10);
 
-  // Enter a loop to keep the node running while looking for messages on the subscribed topic
+  // Solution: Adapt the event loop such that incoming messages are looked for exactly every 20ms
+  ros::Rate loop_rate(50); // 20ms --> 50Hz
   ROS_INFO("Vehicle controller is running...");
-  ros::spin();
+  while (ros::ok())
+  {
+    ROS_INFO("Solution: log message before scanning subscribed topic for new messages");
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
 
   // Clean dynamic memory
   delete publisher_actions;
