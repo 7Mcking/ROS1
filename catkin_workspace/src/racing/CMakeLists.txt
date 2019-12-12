@@ -31,7 +31,10 @@ add_library(racing_library
 # add a building output: a ROS-node that wraps the ROS-independent library
 add_executable(vehicle_controller_node src/vehicle_controller_node.cpp)
 
-# Define headers for this library
+add_executable(vehicle_timer_node src/vehicle_timer_node.cpp)
+
+# Define headers for this library. PUBLIC headers are used by compiling by the exteral developers, and will be added to
+# consumers' build paths.
 target_include_directories(racing_library PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
@@ -51,3 +54,8 @@ target_link_libraries(vehicle_controller_node racing_library)
 add_dependencies(vehicle_controller_node ${catkin_EXPORTED_TARGETS})
 target_include_directories(vehicle_controller_node PRIVATE ${catkin_INCLUDE_DIRS})
 target_link_libraries(vehicle_controller_node ${catkin_LIBRARIES})
+
+# Link the node to the ROS packages used to encode send and receive signals.
+add_dependencies(vehicle_timer_node ${catkin_EXPORTED_TARGETS})
+target_include_directories(vehicle_timer_node PRIVATE ${catkin_INCLUDE_DIRS})
+target_link_libraries(vehicle_timer_node ${catkin_LIBRARIES})
