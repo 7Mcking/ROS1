@@ -21,13 +21,11 @@
 #include <memory>
 
 ros::Subscriber *subscriber_position_data = nullptr;
-bool quadrants[4] = {false, false, false, false};
+bool quadrants[4] = {false, false, false, true}; // start in quadrants[3]
 ros::Time *time_buffer = nullptr;
+bool firstFinishLinePassing = true;
 
-void callbackPosition(const nav_msgs::OdometryPtr &msg) {
-  double& x = msg->pose.pose.position.x;
-  double& y = msg->pose.pose.position.y;
-
+void computeQuadrants(const double& x, const double& y) {
   if (x > 0 && y < 0 ) {
     quadrants[0] = true;
   } else if (x < 0 && y < 0 && quadrants[0]) {
@@ -37,21 +35,42 @@ void callbackPosition(const nav_msgs::OdometryPtr &msg) {
   } else if (x > 0 && y > 0 && quadrants[2]) {
     quadrants[3] = true;
   }
+}
 
-  if (quadrants[3] && x > 0 && y < 0) {
-    for (bool & quadrant : quadrants) {
-      quadrant = false;
-    }
-    if(time_buffer){
-      ros::Duration diff = ros::Time::now() - *time_buffer;
-      boost::posix_time::time_duration my_posix_time = diff.toBoost();
-      std::string iso_time_str = boost::posix_time::to_iso_string(my_posix_time);
-      ROS_INFO("Lap-Time: %ss", iso_time_str.c_str());
-    } else{
-      time_buffer = new ros::Time;
-    }
-    ROS_INFO("Lap gets measured!.");
-    *time_buffer = ros::Time::now();
+bool justPassedFinishLine(const double& x, const double& y) {
+  return quadrants[3] && x > 0 && y < 0;
+}
+
+void printInfo() {
+  ros::Duration diff = ros::Time::now() - *time_buffer;
+  boost::posix_time::time_duration my_posix_time = diff.toBoost();
+  std::string iso_time_str = boost::posix_time::to_iso_string(my_posix_time);
+
+  if (firstFinishLinePassing) {
+    ROS_INFO("Lap time measurement started...");
+    firstFinishLinePassing = false;
+  }
+  else {
+    ROS_INFO("Lap time: %ss", iso_time_str.c_str());
+  }
+}
+
+void resetData() {
+  for (bool & quadrant : quadrants) {
+    quadrant = false;
+  }
+  *time_buffer = ros::Time::now();
+}
+
+void callbackPosition(const nav_msgs::OdometryPtr &msg) {
+  double& x = msg->pose.pose.position.x;
+  double& y = msg->pose.pose.position.y;
+
+  computeQuadrants(x,y);
+
+  if (justPassedFinishLine(x,y)) {
+    printInfo();
+    resetData();
   }
 }
 
@@ -67,6 +86,7 @@ int main(int argc, char *argv[]) {
                                  default_subscribe_topic_position);
   ROS_INFO("Vehicle timer subscribes to: %s", subscribe_topic_position.c_str());
 
+  time_buffer = new ros::Time;
   subscriber_position_data = new ros::Subscriber;
   *subscriber_position_data = node_handle.subscribe(subscribe_topic_position, 10, callbackPosition);
 
