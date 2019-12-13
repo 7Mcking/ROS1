@@ -10,8 +10,8 @@
  */
 /**
  * @author Simon Schaefer
- * @date 18.08.19
- * @file vehicle_controller_node.h
+ * @date 11.12.2019
+ * @file vehicle_timer_node.h
  */
 
 #include <ros/ros.h>
@@ -20,20 +20,15 @@
 
 #include <memory>
 
-/**
- * @brief Subscriber for the sensor data.
- */
 ros::Subscriber *subscriber_position_data = nullptr;
-
 bool quadrants[4] = {false, false, false, false};
-
 ros::Time *time_buffer = nullptr;
 
 void callbackPosition(const nav_msgs::OdometryPtr &msg) {
-  float x = msg->pose.pose.position.x;
-  float y = msg->pose.pose.position.y;
+  double& x = msg->pose.pose.position.x;
+  double& y = msg->pose.pose.position.y;
 
-if (x > 0 && y < 0 ) {
+  if (x > 0 && y < 0 ) {
     quadrants[0] = true;
   } else if (x < 0 && y < 0 && quadrants[0]) {
     quadrants[1] = true;
@@ -61,34 +56,23 @@ if (x > 0 && y < 0 ) {
 }
 
 int main(int argc, char *argv[]) {
-  // Initialise the new node
   ros::init(argc, argv, "vehicle_timer");
   ros::NodeHandle node_handle;
   ROS_INFO("Vehicle timer started.");
 
-  // Set default read and write topics
   std::string default_subscribe_topic_position = "";
-
   std::string subscribe_topic_position;
-
-  // Get read and write targets from launch file parameter
   node_handle.param<std::string>("vehicle/position_topic",
                                  subscribe_topic_position,
                                  default_subscribe_topic_position);
-
   ROS_INFO("Vehicle timer subscribes to: %s", subscribe_topic_position.c_str());
 
-  // Initiate controller, publisher and subscriber
   subscriber_position_data = new ros::Subscriber;
-
-  // Define publisher and subscriber
   *subscriber_position_data = node_handle.subscribe(subscribe_topic_position, 10, callbackPosition);
 
-  // Prevent ros from termination
   ROS_INFO("Vehicle timer is running...");
   ros::spin();
 
-  // Clean heap storage
   delete subscriber_position_data;
   return 0;
 }
